@@ -34,7 +34,7 @@ SOFTWARE.
 #include <tkjhat/pdm_microphone.h>
 #include <stdio.h>
 #include <math.h>
-
+#include <hardware/i2c.h>
 
 
 
@@ -553,7 +553,48 @@ uint32_t veml6030_read_light() {
     //            Kerro arvo sopivalla kertoimella huomioiden 100 ms integraatioaika ja vahvistus 1/8
     //            käyttäen VEML6030-sovellussuunnitteluasiakirjan sivun 5 tietoja:https://www.vishay.com/docs/84367/designingveml6030.pdf
     //            Lopuksi tallenna arvo muuttujaan luxVal_uncorrected.
-  
+    void sensorTask(void *pvParameters) {
+    float luminance;
+    
+    // Alustetaan I2C-väylä
+    i2c_init(i2c_default, 400*1000);
+    
+    // Asetetaan Picon oletuspinnit I2C:lle ohjelman käyttöön
+    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
+    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
+
+    // i2c-viesteille lähetys- ja vastaanottopuskurit
+    uint8_t txBuffer[1]; // Nyt lähetetään yksi tavu
+    uint8_t rxBuffer[2]; // Nyt vastaanotetaan kaksi tavua
+
+    txBuffer [0] = HDC2021_TEMP_LOW; 
+
+    while(1) {
+        if(i2c_write_blocking(i2c_default, VEML6030_I2C_ADDR, txBuffer, 0, true) != PICO_ERROR_GENERIC) {
+            if(i2c_read_blocking(i2c_default, VEML6030_I2C_ADDR, rxBuffer, 1, false) != PICO_ERROR_GENERIC) {
+                
+                // Muunnetaan 2-tavuinen data rxBuffer:ssa
+                // lämpötilaksi (kaava harjoitustehtävissä)
+                //PART OF THE LAB SESSION
+                luminance = als_data[15:0] * 0.0576;
+                // Temperature value to console window
+                printf("%f", luminance);
+            }
+            else {
+                printf("I2C Bus fault\n");
+            }
+        }
+        else {
+            printf("I2C Bus fault\n");
+        }
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    // i2c-yhteyden sulkeminen, tosin ikuinen silmukka ei koskaan päädy tänne
+    i2c_deinit(i2c_default);
+}
+
     uint32_t luxVal_uncorrected = 0; 
     if (luxVal_uncorrected>1000){
         // Polynomial is pulled from pg 10 of the datasheet. 
