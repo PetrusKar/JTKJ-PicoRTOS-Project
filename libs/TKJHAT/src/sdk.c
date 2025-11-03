@@ -509,7 +509,7 @@ void stop_display() {
 // Useful info at: https://learn.sparkfun.com/tutorials/qwiic-ambient-light-sensor-veml6030-hookup-guide/all#arduino-library
 // Programming application: https://www.vishay.com/docs/84367/designingveml6030.pdf
 // Datasheet: https://www.vishay.com/docs/84366/veml6030.pdf
-void init_veml6030() {
+//void init_veml6030() {
     // Configure sensor settings (100ms integration time, gain 1/8, power on)
     //Bit 12:11 = 10 (gain1/8)
     //Bit 9:6 = 0000 (Integration time 100ms)
@@ -518,21 +518,21 @@ void init_veml6030() {
     //Bit 0 = 0 Power on
     // 0b0001 0000 0000 0000 -> =0x1000
 
-    uint8_t config[3] = {
-        VEML6030_CONFIG_REG,  // Configuration register
-        0x00,                 // High byte: Gain 1/8 (00), reserved bits
-        0x10                  // Low byte: 100ms integration time (010 in bits 6-8), power on (bit 0 = 0)
-    };
+    //uint8_t config[3] = {
+     //   VEML6030_CONFIG_REG,  // Configuration register
+     //   0x00,                 // High byte: Gain 1/8 (00), reserved bits
+      //  0x10                  // Low byte: 100ms integration time (010 in bits 6-8), power on (bit 0 = 0)
+   // }//;
     
     // Write configuration to sensor
-    i2c_write_blocking(i2c_default, VEML6030_I2C_ADDR, config, sizeof(config), false);
-    sleep_ms(10);
-}
+    //i2c_write_blocking(i2c_default, VEML6030_I2C_ADDR, config, sizeof(config), false);
+    //sleep_ms(10);
+//}
 
 // Read light level from VEML6030
 // Ligt in LUX
 // Note: sampling time should be > IT -> in this case it has been 100ms by defintion. 
-uint32_t veml6030_read_light() {
+//uint32_t veml6030_read_light() {
 
     // Exercise 2: In order to get the luminance we need to read the value of the VEML6030_ALS_REG (see VEML6030 datasheet)
     //            Use functions i2c_write_blocking and i2_read_blocking to collect luminance data.
@@ -553,60 +553,60 @@ uint32_t veml6030_read_light() {
     //            Kerro arvo sopivalla kertoimella huomioiden 100 ms integraatioaika ja vahvistus 1/8
     //            käyttäen VEML6030-sovellussuunnitteluasiakirjan sivun 5 tietoja:https://www.vishay.com/docs/84367/designingveml6030.pdf
     //            Lopuksi tallenna arvo muuttujaan luxVal_uncorrected.
-    void sensorTask(void *pvParameters) {
-    float luminance;
+    //void sensorTask(void *pvParameters) {
+    //float luminance;
     
     // Alustetaan I2C-väylä
-    i2c_init(i2c_default, 400*1000);
+    //i2c_init(i2c_default, 400*1000);
     
     // Asetetaan Picon oletuspinnit I2C:lle ohjelman käyttöön
-    gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
-    gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
+   // gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
+   // gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
+   // gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
+   // gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
 
     // i2c-viesteille lähetys- ja vastaanottopuskurit
-    uint8_t txBuffer[1]; // Nyt lähetetään yksi tavu
-    uint8_t rxBuffer[2]; // Nyt vastaanotetaan kaksi tavua
+    //uint8_t txBuffer[1]; // Nyt lähetetään yksi tavu
+    //uint8_t rxBuffer[2]; // Nyt vastaanotetaan kaksi tavua
 
-    txBuffer [0] = HDC2021_TEMP_LOW; 
+    //txBuffer [0] = HDC2021_TEMP_LOW; 
 
-    while(1) {
-        if(i2c_write_blocking(i2c_default, VEML6030_I2C_ADDR, txBuffer, 0, true) != PICO_ERROR_GENERIC) {
-            if(i2c_read_blocking(i2c_default, VEML6030_I2C_ADDR, rxBuffer, 1, false) != PICO_ERROR_GENERIC) {
+    //while(1) {
+       // if(i2c_write_blocking(i2c_default, VEML6030_I2C_ADDR, txBuffer, 0, true) != PICO_ERROR_GENERIC) {
+     //       if(i2c_read_blocking(i2c_default, VEML6030_I2C_ADDR, rxBuffer, 1, false) != PICO_ERROR_GENERIC) {
                 
                 // Muunnetaan 2-tavuinen data rxBuffer:ssa
                 // lämpötilaksi (kaava harjoitustehtävissä)
                 //PART OF THE LAB SESSION
-                luminance = als_data[15:0] * 0.0576;
+              //  luminance = als_data[15:0] * 0.0576;
                 // Temperature value to console window
-                printf("%f", luminance);
-            }
-            else {
-                printf("I2C Bus fault\n");
-            }
-        }
-        else {
-            printf("I2C Bus fault\n");
-        }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+               // printf("%f", luminance);
+            //v}
+            //else {
+            //    printf("I2C Bus fault\n");
+         //   }
+        //}
+        //else {
+          //  printf("I2C Bus fault\n");
+        ////}
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+   // }
     // i2c-yhteyden sulkeminen, tosin ikuinen silmukka ei koskaan päädy tänne
-    i2c_deinit(i2c_default);
-}
+    //i2c_deinit(i2c_default);
+//}
 
-    uint32_t luxVal_uncorrected = 0; 
-    if (luxVal_uncorrected>1000){
+    //uint32_t luxVal_uncorrected = 0; 
+   // if (luxVal_uncorrected>1000){
         // Polynomial is pulled from pg 10 of the datasheet. 
         // See https://github.com/sparkfun/SparkFun_Ambient_Light_Sensor_Arduino_Library/blob/efde0817bd6857863067bd1653a2cfafe6c68732/src/SparkFun_VEML6030_Ambient_Light_Sensor.cpp#L409
-        uint32_t luxVal = (.00000000000060135 * (pow(luxVal_uncorrected, 4))) - 
-                            (.0000000093924 * (pow(luxVal_uncorrected, 3))) + 
-                            (.000081488 * (pow(luxVal_uncorrected,2))) + 
-                            (1.0023 * luxVal_uncorrected);
-        return luxVal;
-    }
-    return  luxVal_uncorrected;
-}
+     //   uint32_t luxVal = (.00000000000060135 * (pow(luxVal_uncorrected, 4))) - 
+                          //  (.0000000093924 * (pow(luxVal_uncorrected, 3))) + 
+                           // (.000081488 * (pow(luxVal_uncorrected,2))) + 
+                           // (1.0023 * luxVal_uncorrected);
+       // return luxVal;
+    //}
+    //return  luxVal_uncorrected;
+//}
 
 
 
