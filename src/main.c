@@ -102,7 +102,7 @@ static void print_task(void *arg){
             morse_index = 0;
         }
 
-        sleep_ms(100);
+        sleep_ms(1000);
     }
 
 
