@@ -81,7 +81,7 @@ static void sensor_task(void *arg){
         
         // Exercise 2. Just for sanity check. Please, comment this out
         // Tehtävä 2: Just for sanity check. Please, comment this out
-        printf("sensorTask\n");
+        //printf("sensorTask\n");
 
         // Do not remove this
         vTaskDelay(pdMS_TO_TICKS(1000));
