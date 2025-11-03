@@ -509,7 +509,7 @@ void stop_display() {
 // Useful info at: https://learn.sparkfun.com/tutorials/qwiic-ambient-light-sensor-veml6030-hookup-guide/all#arduino-library
 // Programming application: https://www.vishay.com/docs/84367/designingveml6030.pdf
 // Datasheet: https://www.vishay.com/docs/84366/veml6030.pdf
-//void init_veml6030() {
+void init_veml6030() {
     // Configure sensor settings (100ms integration time, gain 1/8, power on)
     //Bit 12:11 = 10 (gain1/8)
     //Bit 9:6 = 0000 (Integration time 100ms)
@@ -527,7 +527,7 @@ void stop_display() {
     // Write configuration to sensor
     //i2c_write_blocking(i2c_default, VEML6030_I2C_ADDR, config, sizeof(config), false);
     //sleep_ms(10);
-//}
+}
 
 // Read light level from VEML6030
 // Ligt in LUX

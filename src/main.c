@@ -13,12 +13,13 @@
 // Exercise 4. Include the libraries necessaries to use the usb-serial-debug, and tinyusb
 // Tehtävä 4 . Lisää usb-serial-debugin ja tinyusbin käyttämiseen tarvittavat kirjastot.
 
-
+static volatile char morse_buffer[64];
+static volatile uint8_t morse_index = 0;
 
 #define DEFAULT_STACK_SIZE 2048
 #define CDC_ITF_TX      1
 
-
+ 
 // Tehtävä 3: Tilakoneen esittely Add missing states.
 // Exercise 3: Definition of the state machine. Add missing states.
 enum state { WAITING=1};
@@ -32,6 +33,13 @@ static void btn_fxn(uint gpio, uint32_t eventMask) {
     uint8_t pinValue = gpio_get(RED_LED_PIN);
     pinValue = !pinValue;
     gpio_put(RED_LED_PIN, pinValue);
+    
+
+    if (morse_index < sizeof(morse_buffer) - 1) {
+        morse_buffer[morse_index++] = '.';
+    }
+    
+
     
     // Tehtävä 1: Vaihda LEDin tila.
     //            Tarkista SDK, ja jos et löydä vastaavaa funktiota, sinun täytyy toteuttaa se itse.
@@ -84,6 +92,22 @@ static void print_task(void *arg){
     (void)arg;
     
     while(1){
+
+        if(morse_index > 0) {
+            for (int i =0; i < morse_index; i++) {
+                printf("%c", morse_buffer[i]);
+            }
+            printf("\n");
+
+            morse_index = 0;
+        }
+
+        sleep_ms(100);
+    }
+
+
+
+    //while(1){
         
         // Tehtävä 3: Kun tila on oikea, tulosta sensoridata merkkijonossa debug-ikkunaan
         //            Muista tilamuutos
@@ -91,7 +115,7 @@ static void print_task(void *arg){
         // Exercise 3: Print out sensor data as string to debug window if the state is correct
         //             Remember to modify state
         //             Do not forget to comment next line of code.
-        tight_loop_contents();
+        //tight_loop_contents();
         
 
 
@@ -117,11 +141,11 @@ static void print_task(void *arg){
 
         // Exercise 3. Just for sanity check. Please, comment this out
         // Tehtävä 3: Just for sanity check. Please, comment this out
-        printf("printTask\n");
+        //printf("printTask\n");
         
         // Do not remove this
         vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+    //}
 }
 
 
