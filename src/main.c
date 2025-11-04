@@ -58,9 +58,10 @@ static void btn_fxn2(uint gpio, uint32_t eventMask) {
         morse_buffer[morse_index++] = '-';
     }
 }
-
+ 
 // Sisältää käsittelijän kummallekin napille----> kutsuu tarvittavaa funktiota.
 static void btn_handler(uint gpio, uint32_t eventMask) {
+     
 
     // tarkistaa kumpaa nappia painetttiin ja kutsuu sitä vastaavaa funktiota.
     if (gpio == BUTTON1) {
@@ -76,7 +77,16 @@ static void sensor_task(void *arg){
     init_veml6030();
     // Tehtävä 2: Alusta valoisuusanturi. Etsi SDK-dokumentaatiosta sopiva funktio.
     // Exercise 2: Init the light sensor. Find in the SDK documentation the adequate function.
-   
+    
+    init_ICM42670();
+
+    int ICM42670_read_sensor_data();
+    float ax, ay, az;
+        if (ax < 0.2f && ay < 0.2f && az < -0.08); 
+        return 1;
+        
+        
+            
     for(;;){
         
         // Tehtävä 2: Muokkaa tästä eteenpäin sovelluskoodilla. Kommentoi seuraava rivi.
@@ -122,13 +132,13 @@ static void print_task(void *arg){
         if(morse_index > 0) {
             for (int i =0; i < morse_index; i++) {
                 printf("%c", morse_buffer[i]);
-            }
+            }//tämä print-on sen takia, että saadaan uusi rivi, muuten koko bufferi tulostuu yhteen riviin.
             printf("\n");
 
             morse_index = 0;
         }
 
-        sleep_ms(1000);
+        sleep_ms(60);
     }
 
 
@@ -206,6 +216,8 @@ int main() {
     /*while (!stdio_usb_connected()){
         sleep_ms(10);
     }*/ 
+    sensor_task();
+
     
     init_hat_sdk();
     sleep_ms(300); //Wait some time so initialization of USB and hat is done.
