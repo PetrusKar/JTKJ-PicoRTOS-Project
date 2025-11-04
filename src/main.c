@@ -187,7 +187,7 @@ int main() {
     init_button1();
         // Initialize the button pin as an input with a pull-up resisto
 
-    init_red_led();
+    //init_red_led();
         // Initialize the LED pin as an output
      
     gpio_set_irq_enabled_with_callback(BUTTON1, GPIO_IRQ_EDGE_FALL, true, btn_fxn);
