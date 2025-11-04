@@ -30,9 +30,9 @@ enum state programState = WAITING;
 uint32_t ambientLight;
 
 static void btn_fxn(uint gpio, uint32_t eventMask) {
-    uint8_t pinValue = gpio_get(RED_LED_PIN);
-    pinValue = !pinValue;
-    gpio_put(RED_LED_PIN, pinValue);
+   //int8_t pinValue = gpio_get(RED_LED_PIN);
+   //pinValue = !pinValue;
+   //gpio_put(RED_LED_PIN, pinValue);
     
 
     if (morse_index < sizeof(morse_buffer) - 1) {
