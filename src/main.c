@@ -58,8 +58,9 @@ static void btn_fxn2(uint gpio, uint32_t eventMask) {
 }
 
 // Sisältää käsittelijän kummallekin napille----> kutsuu tarvittavaa funktiota.
-static void btn_handler(uint gpio, uint32_t eventMask)
-{
+static void btn_handler(uint gpio, uint32_t eventMask) {
+
+    // tarkistaa kumpaa nappia painetttiin ja kutsuu sitä vastaavaa funktiota.
     if (gpio == BUTTON1) {
         return btn_fxn(gpio, eventMask);
     }
