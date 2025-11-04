@@ -13,6 +13,8 @@
 // Exercise 4. Include the libraries necessaries to use the usb-serial-debug, and tinyusb
 // Tehtävä 4 . Lisää usb-serial-debugin ja tinyusbin käyttämiseen tarvittavat kirjastot.
 
+
+//määritellään napeille bufferit("säilytyspaikka"), jonne merkit ns. "puskuroidaan" ennen tulostamista.
 static volatile char morse_buffer[64];
 static volatile uint8_t morse_index = 0;
 
@@ -51,7 +53,7 @@ static void btn_fxn(uint gpio, uint32_t eventMask) {
 // Funktio napille 2
 static void btn_fxn2(uint gpio, uint32_t eventMask) {
 
-    //napinn painallus lisää viivan morse_bufferiin
+    //napin painallus lisää viivan morse_bufferiin
     if (morse_index < sizeof(morse_buffer) - 1) {
         morse_buffer[morse_index++] = '-';
     }
