@@ -29,12 +29,13 @@ enum state programState = WAITING;
 // Exercise 3: Global variable for ambient light
 uint32_t ambientLight;
 
+//funktio napille 1
 static void btn_fxn(uint gpio, uint32_t eventMask) {
    //int8_t pinValue = gpio_get(RED_LED_PIN);
    //pinValue = !pinValue;
    //gpio_put(RED_LED_PIN, pinValue);
     
-
+     //napinn painallus lisää pisteen morse_bufferiin
     if (morse_index < sizeof(morse_buffer) - 1) {
         morse_buffer[morse_index++] = '.';
     }
@@ -45,6 +46,26 @@ static void btn_fxn(uint gpio, uint32_t eventMask) {
     //            Tarkista SDK, ja jos et löydä vastaavaa funktiota, sinun täytyy toteuttaa se itse.
     // Exercise 1: Toggle the LED. 
     //             Check the SDK and if you do not find a function you would need to implement it yourself. 
+}
+
+// Funktio napille 2
+static void btn_fxn2(uint gpio, uint32_t eventMask) {
+
+    //napinn painallus lisää viivan morse_bufferiin
+    if (morse_index < sizeof(morse_buffer) - 1) {
+        morse_buffer[morse_index++] = '-';
+    }
+}
+
+// Sisältää käsittelijän kummallekin napille----> kutsuu tarvittavaa funktiota.
+static void btn_handler(uint gpio, uint32_t eventMask)
+{
+    if (gpio == BUTTON1) {
+        return btn_fxn(gpio, eventMask);
+    }
+    else if (gpio == BUTTON2) {
+        return btn_fxn2(gpio, eventMask);
+    }
 }
 
 static void sensor_task(void *arg){
@@ -88,6 +109,8 @@ static void sensor_task(void *arg){
     }
 }
 
+//tämä funktio tarkistaa onko morse-bufferissa jotain ja tulostaa sen. Sekä nollaa sen, jotta se ei täyty jatkuvasti.
+//sitten odottaa sekunnin, jotta vältytään tuplakirjoitukselta.
 static void print_task(void *arg){
     (void)arg;
     
@@ -190,8 +213,13 @@ int main() {
     //init_red_led();
         // Initialize the LED pin as an output
      
-    gpio_set_irq_enabled_with_callback(BUTTON1, GPIO_IRQ_EDGE_FALL, true, btn_fxn);
+    init_button2();
+        // Initialize the button pin as an input with a pull-up resistor    
+     
+    gpio_set_irq_enabled_with_callback(BUTTON1, GPIO_IRQ_EDGE_FALL, true, btn_handler);
         // keskeytyskäsittelijä
+
+    gpio_set_irq_enabled(BUTTON2, GPIO_IRQ_EDGE_FALL, true);    
 
     // Exercise 1: Initialize the button and the led and define an register the corresponding interrupton.
     //             Interruption handler is defined up as btn_fxn
