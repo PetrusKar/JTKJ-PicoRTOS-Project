@@ -18,6 +18,8 @@
 static volatile char morse_buffer[64];
 static volatile uint8_t morse_index = 0;
 
+int position = 0;// määritellään globaali muuttuja asennolle: 0=ei määritetty, 1=pöydällä, 2=pystyssä
+
 #define DEFAULT_STACK_SIZE 2048
 #define CDC_ITF_TX      1
 
@@ -59,16 +61,38 @@ static void btn_fxn2(uint gpio, uint32_t eventMask) {
     }
 }
  
+static void btn_fxn3(uint gpio, uint32_t eventMask) {
+
+    //napin painallus lisää tyhjän(space) morse_bufferiin
+    if (morse_index < sizeof(morse_buffer) - 1) {
+        morse_buffer[morse_index++] = ' ';
+    }
+}
+
+static void btn_fxn4(uint gpio, uint32_t eventMask) {
+
+    //napin painallus lisää lopetusmerkin(//) morse_bufferiin
+    if (morse_index < sizeof(morse_buffer) - 1) {
+        morse_buffer[morse_index++] = '/';
+    }
+}
+
 // Sisältää käsittelijän kummallekin napille----> kutsuu tarvittavaa funktiota.
 static void btn_handler(uint gpio, uint32_t eventMask) {
      
 
     // tarkistaa kumpaa nappia painetttiin ja kutsuu sitä vastaavaa funktiota.
-    if (gpio == BUTTON1) {
+    if (gpio == BUTTON1 && position ==1) {
         return btn_fxn(gpio, eventMask);
     }
-    else if (gpio == BUTTON2) {
+    else if (gpio == BUTTON2 && position ==1) {
         return btn_fxn2(gpio, eventMask);
+    }
+    else if (gpio == BUTTON1 && position ==2) {
+        return btn_fxn3(gpio, eventMask);
+    }
+    else if (gpio == BUTTON2 && position == 2) {
+        return btn_fxn4(gpio, eventMask);
     }
 }
 //table = (ax < -0.015f, ay < -0.06f, az < 1.016f); 
@@ -92,10 +116,10 @@ static void sensor_task(void *arg){
         if (programState == WAITING) {
             ICM42670_read_sensor_data(&ax, &ay, &az, NULL, NULL, NULL, NULL);
             if(ax > -0.02f && ay > -0.1f && az < 1.1f){
-            printf("stationary\n");
+                position = 1; //pöydällä
             }
-            else if(ax > -0.04f && ay > -1.0f && az < -0.3f){
-                printf("upside\n");
+            else if(ax > 0.08f && ay > -1.0f && az > 0.03f){
+                position = 2;//pystyssä
             }
         }    // Tehtävä 2: Lue anturidata ja tulosta se merkkijonona debug-ikkunaan
             //            Älä unohda kommentoida seuraavaa koodiriviä.
