@@ -71,6 +71,8 @@ static void btn_handler(uint gpio, uint32_t eventMask) {
         return btn_fxn2(gpio, eventMask);
     }
 }
+//table = (ax < -0.015f, ay < -0.06f, az < 1.016f); 
+
 
 static void sensor_task(void *arg){
     (void)arg;
@@ -78,16 +80,25 @@ static void sensor_task(void *arg){
     // Tehtävä 2: Alusta valoisuusanturi. Etsi SDK-dokumentaatiosta sopiva funktio.
     // Exercise 2: Init the light sensor. Find in the SDK documentation the adequate function.
     
+    float ax, ay, az;
+    float gx, gy, gz;
+
     init_ICM42670();
 
-    int ICM42670_read_sensor_data();
-    float ax, ay, az;
-        if (ax < 0.2f && ay < 0.2f && az < -0.08); 
-        return 1;
-        
-        
+    ICM42670_start_with_default_values();        
             
     for(;;){
+
+        if (programState == WAITING) {
+            ICM42670_read_sensor_data(&ax, &ay, &az, NULL, NULL, NULL, NULL);
+            if(ax > -0.02f && ay > -0.1f && az < 1.1f){
+            printf("stationary\n");
+            }
+            else if(ax > -0.04f && ay > -1.0f && az < -0.3f){
+                printf("upside\n");
+            }
+        }    // Tehtävä 2: Lue anturidata ja tulosta se merkkijonona debug-ikkunaan
+            //            Älä unohda kommentoida seuraavaa koodiriviä.
         
         // Tehtävä 2: Muokkaa tästä eteenpäin sovelluskoodilla. Kommentoi seuraava rivi.
         //             
@@ -216,7 +227,8 @@ int main() {
     /*while (!stdio_usb_connected()){
         sleep_ms(10);
     }*/ 
-    sensor_task();
+
+    //sensor_task();
 
     
     init_hat_sdk();
