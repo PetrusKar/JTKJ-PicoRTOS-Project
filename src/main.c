@@ -45,7 +45,7 @@ static void btn_fxn2(uint gpio, uint32_t eventMask) {
         morse_buffer[morse_index++] = '-';
     }
 }
- 
+ //funktio napille 1, kun pystyssä
 static void btn_fxn3(uint gpio, uint32_t eventMask) {
 
     //napin painallus lisää tyhjän(space) morse_bufferiin
@@ -53,10 +53,10 @@ static void btn_fxn3(uint gpio, uint32_t eventMask) {
         morse_buffer[morse_index++] = ' ';
     }
 }
-
+//funktio napille 2, kun pystyssä  
 static void btn_fxn4(uint gpio, uint32_t eventMask) {
 
-    //napin painallus lisää lopetusmerkin(//) morse_bufferiin
+    //napin painallus lisää lopetusmerkin(/) morse_bufferiin
     if (morse_index < sizeof(morse_buffer) - 1) {
         morse_buffer[morse_index++] = '/';
     }
@@ -88,7 +88,7 @@ static void btn_handler(uint gpio, uint32_t eventMask) {
 static void sensor_task(void *arg){
     (void)arg;
      
-    
+    //muuutujat anturin lukemista varten
     float ax, ay, az;
     float gx, gy, gz;
 
