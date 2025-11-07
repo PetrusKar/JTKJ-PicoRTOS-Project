@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 
@@ -80,28 +79,37 @@ static void btn_handler(uint gpio, uint32_t eventMask) {
     else if (gpio == BUTTON2 && position == 2) {
         return btn_fxn4(gpio, eventMask);
     }
+    else if (gpio == BUTTON1 || BUTTON2 && position == 3){
+        printf("wrong position, try again.\n");
+    }
 }
 
 
 static void sensor_task(void *arg){
     (void)arg;
-        
+     
+    
     float ax, ay, az;
     float gx, gy, gz;
 
+    // alustaa anturin
     init_ICM42670();
 
+    //asettaa anturin oletusarvoihin
     ICM42670_start_with_default_values();        
             
     for(;;){
 
         if (programState == WAITING) {
             ICM42670_read_sensor_data(&ax, &ay, &az, NULL, NULL, NULL, NULL);
-            if(ax > -0.02f && ay > -0.1f && az < 1.1f){
+            if(az > 0.8f){ //ax > -0.02f && ay > -0.1f && az < 1.1f
                 position = 1; //pöydällä
             }
-            else if(ax > 0.08f && ay > -1.0f && az > 0.03f){
+            else if(ay < -0.8f){ //ax > 0.08f && ay > -1.0f && az > 0.03f
                 position = 2;//pystyssä
+            }
+            else if(az < -0.8f || ax > 0.8f){
+                position = 3;//ei määritelty asento
             }
         }    
         tight_loop_contents(); 
