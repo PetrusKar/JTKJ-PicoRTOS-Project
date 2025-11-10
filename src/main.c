@@ -13,11 +13,11 @@
 // Tehtävä 4 . Lisää usb-serial-debugin ja tinyusbin käyttämiseen tarvittavat kirjastot.
 
 
-//määritellään napeille bufferit("säilytyspaikka"), jonne merkit ns. "puskuroidaan" ennen tulostamista.
+//määritellään napeille bufferit("säilytyspaikka"), jonne merkit ns. "puskuroidaan" ennen tulostamista. PK
 static volatile char morse_buffer[64];
 static volatile uint8_t morse_index = 0;
 
-int position = 0;// määritellään globaali muuttuja asennolle: 0=ei määritetty, 1=pöydällä, 2=pystyssä
+int position = 0;// määritellään globaali muuttuja asennolle: 0=ei määritetty, 1=pöydällä, 2=pystyssä PK
 
 #define DEFAULT_STACK_SIZE 2048
 #define CDC_ITF_TX      1
@@ -28,24 +28,26 @@ enum state { WAITING=1};
 enum state programState = WAITING;
 
 
-//funktio napille 1
+//funktio napille 1 PK
 static void btn_fxn(uint gpio, uint32_t eventMask) {
      //napinn painallus lisää pisteen morse_bufferiin
     if (morse_index < sizeof(morse_buffer) - 1) {
         morse_buffer[morse_index++] = '.';
-    }
 
+    }
 }
 
-// Funktio napille 2
+// Funktio napille 2 PK
 static void btn_fxn2(uint gpio, uint32_t eventMask) {
 
     //napin painallus lisää viivan morse_bufferiin
     if (morse_index < sizeof(morse_buffer) - 1) {
         morse_buffer[morse_index++] = '-';
-    }
+
+       
+    }     
 }
- //funktio napille 1, kun pystyssä
+ //funktio napille 1, kun pystyssä PK
 static void btn_fxn3(uint gpio, uint32_t eventMask) {
 
     //napin painallus lisää tyhjän(space) morse_bufferiin
@@ -53,7 +55,7 @@ static void btn_fxn3(uint gpio, uint32_t eventMask) {
         morse_buffer[morse_index++] = ' ';
     }
 }
-//funktio napille 2, kun pystyssä  
+//funktio napille 2, kun pystyssä PK 
 static void btn_fxn4(uint gpio, uint32_t eventMask) {
 
     //napin painallus lisää lopetusmerkin(/) morse_bufferiin
@@ -62,7 +64,15 @@ static void btn_fxn4(uint gpio, uint32_t eventMask) {
     }
 }
 
-// Sisältää käsittelijän kummallekin napille----> kutsuu tarvittavaa funktiota.
+//funktio kummallekin napille, kun asento ei määritetty PK
+static void btn_fxn5(uint gpio, uint32_t eventMask) {
+
+    //tässä tapauksessa lisätään kysymysmerkki, koska on väärä asento.
+    if (morse_index < sizeof(morse_buffer) - 1) {
+        morse_buffer[morse_index++] = '?';
+    }
+}
+// Sisältää käsittelijän kummallekin napille----> kutsuu tarvittavaa funktiota. PK
 static void btn_handler(uint gpio, uint32_t eventMask) {
      
 
@@ -80,7 +90,7 @@ static void btn_handler(uint gpio, uint32_t eventMask) {
         return btn_fxn4(gpio, eventMask);
     }
     else if (gpio == BUTTON1 || BUTTON2 && position == 3){
-        printf("wrong position, try again.\n");
+        return btn_fxn5(gpio, eventMask);
     }
 }
 
@@ -88,14 +98,14 @@ static void btn_handler(uint gpio, uint32_t eventMask) {
 static void sensor_task(void *arg){
     (void)arg;
      
-    //muuutujat anturin lukemista varten
+    //muuutujat anturin lukemista varten SP
     float ax, ay, az;
     float gx, gy, gz;
 
-    // alustaa anturin
+    // alustaa anturin SP
     init_ICM42670();
 
-    //asettaa anturin oletusarvoihin
+    //asettaa anturin oletusarvoihin SP
     ICM42670_start_with_default_values();        
             
     for(;;){
@@ -120,14 +130,14 @@ static void sensor_task(void *arg){
 }
 
 //tämä funktio tarkistaa onko morse-bufferissa jotain ja tulostaa sen. Sekä nollaa sen, jotta se ei täyty jatkuvasti.
-//sitten odottaa sekunnin, jotta vältytään tuplakirjoitukselta.
+//sitten odottaa sekunnin, jotta vältytään tuplakirjoitukselta. SP/PK
 static void print_task(void *arg){
     (void)arg;
     
     while(1){
 
         if(morse_index > 0) {
-            for (int i =0; i < morse_index; i++) {
+            for (int i = 0; i < morse_index; i++) {
                 printf("%c", morse_buffer[i]);
             }//tämä print-on sen takia, että saadaan uusi rivi, muuten koko bufferi tulostuu yhteen riviin.
             printf("\n");
@@ -135,7 +145,7 @@ static void print_task(void *arg){
             morse_index = 0;
         }
 
-        sleep_ms(60);
+        sleep_ms(10);
     }
       
         // Do not remove this
@@ -158,10 +168,10 @@ int main() {
         // Initialize the button pin as an input with a pull-up resistor    
      
     gpio_set_irq_enabled_with_callback(BUTTON1, GPIO_IRQ_EDGE_FALL, true, btn_handler);
-        // keskeytyskäsittelijä napille 1
+        // keskeytyskäsittelijä napille 1 PK
 
     gpio_set_irq_enabled(BUTTON2, GPIO_IRQ_EDGE_FALL, true);
-        // keskeytyskäsittelijä napille 2    
+        // keskeytyskäsittelijä napille 2  PK  
  
     
     TaskHandle_t hSensorTask, hPrintTask, hUSB = NULL;
