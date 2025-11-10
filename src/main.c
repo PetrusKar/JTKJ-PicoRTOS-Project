@@ -77,13 +77,13 @@ static void btn_handler(uint gpio, uint32_t eventMask) {
      
 
     // tarkistaa kumpaa nappia painetttiin sekä laitteen asennon ja kutsuu sitä vastaavaa funktiota.
-    if (gpio == BUTTON1 && position ==1) {
+    if (gpio == BUTTON1 && position == 1) {
         return btn_fxn(gpio, eventMask);
     }
-    else if (gpio == BUTTON2 && position ==1) {
+    else if (gpio == BUTTON2 && position == 1) {
         return btn_fxn2(gpio, eventMask);
     }
-    else if (gpio == BUTTON1 && position ==2) {
+    else if (gpio == BUTTON1 && position == 2) {
         return btn_fxn3(gpio, eventMask);
     }
     else if (gpio == BUTTON2 && position == 2) {
@@ -138,14 +138,16 @@ static void print_task(void *arg){
 
         if(morse_index > 0) {
             for (int i = 0; i < morse_index; i++) {
-                printf("%c", morse_buffer[i]);
+                printf("%c", morse_buffer[0]);
             }//tämä print-on sen takia, että saadaan uusi rivi, muuten koko bufferi tulostuu yhteen riviin.
             printf("\n");
 
+            sleep_ms(500);
+            
             morse_index = 0;
         }
 
-        sleep_ms(10);
+        
     }
       
         // Do not remove this
