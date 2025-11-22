@@ -10,9 +10,6 @@
 #include "tkjhat/sdk.h"
 
 
-// Tehtävä 4 . Lisää usb-serial-debugin ja tinyusbin käyttämiseen tarvittavat kirjastot.
-
-
 //määritellään napeille bufferit("säilytyspaikka"), jonne merkit ns. "puskuroidaan" ennen tulostamista. PK
 static volatile char morse_buffer[64];
 static volatile uint8_t morse_index = 0;
