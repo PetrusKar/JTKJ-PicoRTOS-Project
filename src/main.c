@@ -110,10 +110,10 @@ static void sensor_task(void *arg){
 
         if (programState == WAITING) {
             ICM42670_read_sensor_data(&ax, &ay, &az, NULL, NULL, NULL, NULL);
-            if(az > 0.8f){ //ax > -0.02f && ay > -0.1f && az < 1.1f
+            if(az > 0.8f){ 
                 position = 1; //pöydällä
             }
-            else if(ay < -0.8f){ //ax > 0.08f && ay > -1.0f && az > 0.03f
+            else if(ay < -0.8f){ 
                 position = 2;//pystyssä
             }
             else if(az < -0.8f || ax > 0.8f){
