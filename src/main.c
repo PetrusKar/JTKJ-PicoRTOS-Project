@@ -9,6 +9,8 @@
 
 #include "tkjhat/sdk.h"
 
+//Tekijät tälle projektille ovat Samu Pyhäluoto(SP) ja Petrus Karvonen(PK).
+
 //Pisteet jaetaan 3p Samulle ja 3p Petrukselle ja vaadittu taso on 1
 
 //määritellään napeille bufferit("säilytyspaikka"), jonne merkit ns. "puskuroidaan" ennen tulostamista. PK
