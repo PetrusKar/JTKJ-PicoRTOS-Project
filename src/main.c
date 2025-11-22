@@ -9,6 +9,7 @@
 
 #include "tkjhat/sdk.h"
 
+//Pisteet jaetaan 3p Samulle ja 3p Petrukselle ja vaadittu taso on 1
 
 //määritellään napeille bufferit("säilytyspaikka"), jonne merkit ns. "puskuroidaan" ennen tulostamista. PK
 static volatile char morse_buffer[64];
